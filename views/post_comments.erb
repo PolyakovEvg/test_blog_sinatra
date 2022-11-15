@@ -1,0 +1,38 @@
+<div class="container">
+  <%if @error_comment then%>
+    <div class="mt-1 alert alert-danger"><%=@error_comment%></div>
+  <%elsif @sucess_comment%>
+    <div class='mt-1 alert alert-success'><%=@sucess_comment%></div>
+  <%end%>
+  <div class="card mt-1">
+    <div class="card-header">
+      От автора в <%=@row['created_date']%>
+    </div>
+    <div class="card-body">
+      <h5 class="card-title">Title</h5>
+      <p class="card-text"><%=@row['message']%></p>
+    </div>
+  </div>
+  <h3 class="flex-column d-flex">Оставьте комментарий</h3>
+  <div class="d-flex ">
+    <form action="/posts/<%=@row['id']%>" method="post" role="form">
+      <div class="input-group flex-nowrap">
+        <span class="input-group-text" id="addon-wrapping">@</span>
+        <input type="text" name="commentator" class="form-control" placeholder="Ваше имя"  aria-describedby="addon-wrapping" value="<%=@commentator%>">
+      </div>
+      <div class="form-floating">
+        <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px" name="text_area_message"><%=@comment%></textarea>
+        <label for="floatingTextarea2">Комментарий</label>
+      </div>
+      <button type="submit" class="mt-2 btn btn-primary">Submit</button>
+    </form>
+  </div>
+  <div class="container mt-2 text-center card">
+    <h3>Все комментарии</h3>
+    <% @comments.each do |comment|%>
+      <div class="input-group flex-nowrap mt-1">
+        <span class="input-group-text col-2" ><%=comment['commentator']%>:</span>
+        <div type="text" name="commentator" class="form-control col-6 text-start" value="<%=@commentator%>"><%=comment['comment']%></div>
+      </div>
+    <%end%>
+  </div>

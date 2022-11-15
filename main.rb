@@ -4,6 +4,7 @@ require 'sinatra/reloader'
 require 'sqlite3'   
 
 
+
 def init_db
     @db = SQLite3::Database.new 'blog.db'
     @db.results_as_hash = true
@@ -19,12 +20,23 @@ configure do
     Posts(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         created_date DATE,
-        name VARCHAR
+        message VARCHAR
+        );'
+        @db.execute 'CREATE TABLE IF NOT EXISTS
+    Comments(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        created_date DATE,
+        commentator VARCHAR,
+        comment VARCHAR,
+        post_id INTEGER
         );'
 end
 
-before do
-    init_db
+def validation_form hash
+    error = hash.select {|key| params[key]== ''}.values.join(', ')
+    if error != ''
+        return error
+    end
 end
 
 get '/' do
@@ -36,18 +48,60 @@ get '/new' do
 end
 
 get '/posts' do
+    @posts = @db.execute 'select * from Posts order by id desc'
     erb :posts
+end
+
+get '/posts/:post_id' do
+    post_id = params[:post_id]
+    results = @db.execute "select * from Posts where id = ?", [post_id]
+    @comments = @db.execute 'select * from Comments where post_id=?',[post_id]
+    @row = results[0]
+    erb :post_comments
 end
 
 post '/new' do
     @post = params[:text_area_message]
     
     if @post != ''
-        @db.execute 
+        @db.execute 'insert into Posts (message, created_date) values (?,datetime())',[@post]
         @sucess = 'Пост добавлен'
         erb :new
     else
         @error = 'Пост не написан'
         erb :new
     end
+end
+
+post '/posts/:post_id' do
+    @post_id = params[:post_id]
+    results = @db.execute "select * from Posts where id = ?", [@post_id]
+    @row = results[0]
+    @comment = params[:text_area_message]
+    @commentator = params[:commentator]
+
+    @errors = {
+        :commentator => 'Введите имя',
+        :text_area_message => 'Оставьте комментарий'
+    }
+
+    @error_comment = validation_form @errors
+    if @error_comment
+        erb :post_comments
+    else
+        @sucess_comment = 'Ваш комментарий был добавлен'
+        @db.execute "INSERT INTO Comments (created_date, commentator, comment, post_id) VALUES (datetime(),?,?,?)",[@commentator,@comment,@post_id]
+
+        @comments = @db.execute 'select * from Comments where post_id = 3'
+        redirect to ('/posts/' + @post_id)
+
+    end
+    
+    # if @comment.length <= 0 
+    #     @error_comment = 'Комментарий не введен'
+    #     erb :post_comments
+    # else
+    #     @sucess_comment = 'Ваш комментарий был добавлен'
+    #     erb :post_comments
+    # end
 end
