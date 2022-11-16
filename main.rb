@@ -20,7 +20,9 @@ configure do
     Posts(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         created_date DATE,
-        message VARCHAR
+        message VARCHAR,
+        title VARCHAR,
+        user_name VARCHAR
         );'
         @db.execute 'CREATE TABLE IF NOT EXISTS
     Comments(
@@ -62,15 +64,31 @@ end
 
 post '/new' do
     @post = params[:text_area_message]
+    @user_name = params[:user_name]
+    @post_title = params[:post_title]
     
-    if @post != ''
-        @db.execute 'insert into Posts (message, created_date) values (?,datetime())',[@post]
-        @sucess = 'Пост добавлен'
+    @errors = {
+        :user_name => 'Введите имя',
+        :post_title => 'Введите тему',
+        :text_area_message => 'Отсутствует содержание поста',
+    }
+
+    @error_new_post = validation_form @errors
+    if @error_new_post
         erb :new
     else
-        @error = 'Пост не написан'
+        @sucess = 'Пост добавлен'
+        @db.execute 'insert into Posts (message,user_name, title, created_date) values (?,?,?,datetime())',[@post, @user_name,@post_title]
         erb :new
     end
+    # if @post != ''
+    #     @db.execute 'insert into Posts (message, created_date) values (?,datetime())',[@post]
+    #     @sucess = 'Пост добавлен'
+    #     erb :new
+    # else
+    #     @error = 'Пост не написан'
+    #     erb :new
+    # end
 end
 
 post '/posts/:post_id' do

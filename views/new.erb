@@ -1,12 +1,16 @@
 <div class="container">
-  <%if @error then%>
-    <div class="mt-1 alert alert-danger"><%=@error%></div>
+  <%if @error_new_post then%>
+    <div class="mt-1 alert alert-danger"><%=@error_new_post%></div>
   <%elsif @sucess%>
     <div class='mt-1 alert alert-success'><%=@sucess%></div>
   <%end%>
   <h1>Здесь можете написать свой пост</h1>
   <form action="/new" method="post" role="form">
-    <div class="form-floating">
+  <label>Ваше имя</label>
+   <input type="text" name="user_name" class="form-control"  value="<%=@user_name%>">
+   <label>Заголовок</label>
+    <input type="text" name="post_title" class="form-control"  value="<%=@post_title%>">
+    <div class="form-floating mt-2">
       <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 130px" name="text_area_message"></textarea>
       <label for="floatingTextarea2">Напишите пост</label>
     </div>

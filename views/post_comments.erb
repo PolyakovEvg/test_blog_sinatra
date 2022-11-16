@@ -18,7 +18,7 @@
     <form action="/posts/<%=@row['id']%>" method="post" role="form">
       <div class="input-group flex-nowrap">
         <span class="input-group-text" id="addon-wrapping">@</span>
-        <input type="text" name="commentator" class="form-control" placeholder="Ваше имя"  aria-describedby="addon-wrapping" value="<%=@commentator%>">
+        <input type="text" name="commentator" class="form-control" placeholder="Ваше имя" value="<%=@commentator%>">
       </div>
       <div class="form-floating">
         <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px" name="text_area_message"><%=@comment%></textarea>
@@ -27,12 +27,14 @@
       <button type="submit" class="mt-2 btn btn-primary">Submit</button>
     </form>
   </div>
-  <div class="container mt-2 text-center card">
-    <h3>Все комментарии</h3>
-    <% @comments.each do |comment|%>
-      <div class="input-group flex-nowrap mt-1">
-        <span class="input-group-text col-2" ><%=comment['commentator']%>:</span>
-        <div type="text" name="commentator" class="form-control col-6 text-start" value="<%=@commentator%>"><%=comment['comment']%></div>
-      </div>
-    <%end%>
-  </div>
+</div>
+<div class="container">
+<h4 class="text-center">Все комментарии</h4>
+<% @comments.each do |comment|%>
+  <p><%=comment['comment']%>
+    <br />
+    <span style="font-size: 75%; color: gray"> От @<%=comment['commentator']%> в <%=comment['created_date']%></span></p>
+<%end%>
+</div>
+
+

@@ -3,10 +3,10 @@
 <% @posts.each do |row| %>
 <div class="card mt-1">
   <div class="card-header">
-    От автора в <%=row['created_date']%>
+    От <%=row['user_name']%> в <%=row['created_date']%>
   </div>
   <div class="card-body">
-    <h5 class="card-title">Title</h5>
+    <h5 class="card-title"><%=row['title']%></h5>
     <p class="card-text"><%=row['message']%></p>
     <a href="http:/posts/<%=row['id']%>" class="btn btn-primary">Комментарии</a>
   </div>
